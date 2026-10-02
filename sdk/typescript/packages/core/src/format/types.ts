@@ -1,0 +1,54 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (c) 2026 SecureAgentics
+
+import type { CallbackMetadata, ChatMessage, ErrorData, TokenUsage, ToolCallRecord } from "../types.js";
+
+export interface AgentContext {
+  agentId: string;
+  systemPrompt: string;
+  userInstruction: string;
+}
+
+export interface ParentContext {
+  agentId: string;
+  systemPrompt: string;
+  userInstruction: string;
+}
+
+export interface LlmPairData {
+  kind: "llm";
+  model: string;
+  messages: ChatMessage[];
+  output: string;
+  toolCalls: ToolCallRecord[];
+  usage: TokenUsage | null;
+  /** The model's reasoning / chain of thought. */
+  reasoning: string;
+  error?: ErrorData;
+}
+
+export interface ToolPairData {
+  kind: "tool";
+  toolName: string;
+  toolCallId: string | null;
+  input: string;
+  output: string;
+  error?: ErrorData;
+}
+
+export type PairType = "llm" | "tool";
+export type PairData = LlmPairData | ToolPairData;
+
+export interface PairedEvent {
+  eventId: string;
+  invocationId: string;
+  sessionId: string;
+  runId: string;
+  parentRunId: string;
+  timestamp: string;
+  pairType: PairType;
+  agent: AgentContext;
+  parent: ParentContext | null;
+  data: PairData;
+  metadata: CallbackMetadata | null;
+}
