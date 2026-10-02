@@ -1,84 +1,132 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/adrian-logo-dark.png">
-    <img src="assets/adrian-logo-light.png" alt="Adrian by Secure Agentics" width="360">
+    <img src="assets/adrian-logo-light.png" alt="Adrian by Secure Agentics" width="340">
   </picture>
 </p>
 
-<h3 align="center">Agent attacks slip past static analysis and network monitoring.</h3>
-<p align="center"><b>Adrian catches them at runtime, by watching what the agent actually does (its actions and its reasoning) and stepping in before it acts. Open source, free forever.</b></p>
-
-<p align="center"><b>+35% detection accuracy · 4x more nuanced attacks caught</b> vs behaviour-only monitoring (<a href="https://arxiv.org/pdf/2503.11926">OpenAI &amp; DeepMind research</a>)</p>
+<h3 align="center">Runtime security for AI agents.</h3>
 
 <p align="center">
-  <a href="https://github.com/secureagentics/Adrian/stargazers"><img src="https://img.shields.io/github/stars/secureagentics/Adrian?style=social" alt="Stars" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/licence-Apache--2.0-blue.svg" alt="Licence" /></a>
-  <a href="https://app.adrian.secureagentics.ai/"><img src="https://img.shields.io/badge/Dashboard-Sign%20Up-22C55E" alt="Dashboard" /></a>
-  <a href="https://pypi.org/project/adrian-sdk/"><img src="https://img.shields.io/pypi/v/adrian-sdk.svg" alt="PyPI" /></a>
-  <a href="https://discord.gg/Vq2VyYrw8Z"><img src="https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white" alt="Discord" /></a>
-  <a href="https://www.linkedin.com/company/secure-agentics"><img src="https://img.shields.io/badge/LinkedIn-Follow-0A66C2?logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
-  <a href="https://www.producthunt.com/products/adrian?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-adrian" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Product%20Hunt-Featured-DA552F?logo=producthunt&logoColor=white" alt="Product Hunt" /></a>
+  Adrian watches what your agent <b>does</b> and why it <b>decided</b> to do it,<br>
+  then alerts, pauses for a human, or blocks the action before it lands.
 </p>
 
-<p align="center"><i>⭐ If you think agents need a runtime security layer, star the repo. It is how new people find Adrian, and how we know to keep building it in the open.</i></p>
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licence-Apache--2.0-blue.svg" alt="Licence: Apache 2.0"></a>
+  <a href="https://pypi.org/project/adrian-sdk/"><img src="https://img.shields.io/pypi/v/adrian-sdk.svg?label=pypi" alt="PyPI"></a>
+  <a href="https://www.npmjs.com/package/@secureagentics/adrian"><img src="https://img.shields.io/npm/v/@secureagentics/adrian.svg?label=npm" alt="npm"></a>
+  <img src="https://img.shields.io/badge/python-3.12%2B-3776AB?logo=python&logoColor=white" alt="Python 3.12+">
+  <img src="https://img.shields.io/badge/node-18%2B-339933?logo=nodedotjs&logoColor=white" alt="Node 18+">
+  <img src="https://img.shields.io/badge/backend-Go-00ADD8?logo=go&logoColor=white" alt="Go backend">
+  <a href="https://discord.gg/Vq2VyYrw8Z"><img src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://github.com/secureagentics/Adrian/stargazers"><img src="https://img.shields.io/github/stars/secureagentics/Adrian?style=social" alt="GitHub stars"></a>
+</p>
+
+<p align="center">
+  <a href="https://docs.adrian.secureagentics.ai">Documentation</a> ·
+  <a href="https://app.adrian.secureagentics.ai">Managed dashboard</a> ·
+  <a href="#quickstart">Quickstart</a> ·
+  <a href="#self-hosting">Self-hosting</a> ·
+  <a href="https://discord.gg/Vq2VyYrw8Z">Discord</a>
+</p>
 
 ---
 
-Adrian is an open-source, [AARM-aligned](https://aarm.dev) runtime security monitoring and control engine for AI agents. It analyses both agent activity logs (tool calls, actions, outputs) and reasoning traces to detect malicious, misaligned, or out-of-remit behaviour, and optionally intervene in-flight. SDKs are available for Python ([LangChain](sdk/python/README.md), [Anthropic](sdk/python/ANTHROPIC.md)) and TypeScript ([sdk/typescript/README.md](sdk/typescript/README.md)), plus a native [Claude Code plugin](integrations/claude-code/README.md) that secures every tool call from your terminal.
+## Overview
 
-> **🆕 Claude Code plugin - now live.** Drop Adrian into Claude Code and every tool call is classified in real time, with risky actions blocked or held for your approval right in the terminal. No code changes: install with `/plugin marketplace add secureagentics/Adrian` then `/adrian-init`. Full guide: **[integrations/claude-code/README.md](integrations/claude-code/README.md)**.
+Adrian is an open-source runtime security monitoring and control engine for AI agents, aligned with the [AARM](https://aarm.dev) specification. It ingests two signals from a running agent, **activity** (tool calls, actions, outputs) and **reasoning** (the chain of thought behind each step), and classifies every step against a declared remit. Depending on policy, a risky step is logged, held for human approval, or stopped before the tool executes.
 
-<p align="center">
-  <a href="https://docs.adrian.secureagentics.ai">Documentation</a> &nbsp;•&nbsp;
-  <a href="https://app.adrian.secureagentics.ai">Dashboard</a> &nbsp;•&nbsp;
-  <a href="https://discord.gg/Vq2VyYrw8Z">Discord</a> &nbsp;•&nbsp;
-  <a href="https://www.linkedin.com/company/secure-agentics">LinkedIn</a>
-</p>
+Static analysis and network monitoring cannot see an agent being talked into misbehaving. Adrian sits inside the agent loop, so it can.
 
-> **▶️ See it in action:** Adrian catches an agent going out-of-remit in real time and steps in before the action lands.
+> **Claude Code plugin.** Secure every tool call in your terminal with no code changes:
+> `/plugin marketplace add secureagentics/Adrian`, then `/plugin install adrian-cc@adrian`, then `/adrian-init`.
+> See [integrations/claude-code](integrations/claude-code/README.md).
 
-https://github.com/user-attachments/assets/ba50e6e4-fe3e-47b2-aa69-2902e1ef2924
+<p align="center"><a href="https://www.youtube.com/watch?v=NkEISlRhyFs"><b>Watch the launch video</b></a></p>
 
-<sup>New to Adrian? Check out the [Launch Video](https://www.youtube.com/watch?v=NkEISlRhyFs).</sup>
+## Why Adrian
 
-## Why Adrian is different
+Most agent monitoring stops at activity logs: API calls, MCP traffic, database queries. Adrian also analyses the agent's reasoning, so it understands why an action was taken, in what context, and what the agent plans to do next. [Research from OpenAI and DeepMind](https://arxiv.org/pdf/2503.11926) reports that combining behaviour and reasoning analysis improves detection accuracy by about 35% and is roughly four times more likely to catch nuanced attacks than behaviour-only monitoring.
 
-Most agent monitoring stops at activity logs: APIs, MCP, DB interactions, tool calls, etc. Adrian enhances this by also analysing the agent's reasoning: understanding _why_ it took an action, under what context, and what it is planning on doing next. Combining behaviour and reasoning analysis like this is exactly what the [OpenAI and DeepMind research](https://arxiv.org/pdf/2503.11926) found catches far more, and Adrian is the first tool to put it into a deployable security control, free forever.
+|  | Pattern-matching classifiers | Adrian |
+|---|---|---|
+| **Detection basis** | Similarity to known prompt-injection datasets | Judgement against *your agent's declared remit* |
+| **Signals** | Prompt or output text | Reasoning traces, tool calls and tool outputs, correlated across the whole session |
+| **Novel attacks** | Only what the training set has seen | An e-commerce agent that starts resetting passwords is flagged even though no dataset contains it |
+| **Response** | Score or log | Alert, human review, or in-flight block, set per agent |
 
-**What it catches:**
-- Prompt injection and jailbreaks, direct and indirect
-- Tool poisoning and unsafe or off-policy tool calls
-- Data exfiltration and secret / credential leakage
-- Privilege escalation and out-of-remit actions
+## What it detects
 
-Classifiers trained on prompt-injection datasets only catch what they have seen before. Adrian works differently: it holds a working understanding of what your agent is meant to do and judges each new action against that, correlated across the whole session. So when your e-commerce agent starts resetting user passwords, something no training set would flag, Adrian catches it.
+Every classified step receives a MAD (Malicious Activity Detection) code. Codes map to the OWASP Top 10 for LLM Applications and the OWASP Top 10 for Agentic Applications.
+
+| Tier | Meaning | Sub-categories | Default action |
+|---|---|---|---|
+| **M0** | Benign and within remit | n/a | None |
+| **M2** | Likely misuse | Scope overreach · indirect policy evasion · unverified tool use · following injected or user instructions over policy · concealment · dispatch without constraint check · accepting physically implausible data | Notify |
+| **M3** | High-risk misuse | Safeguard bypass · assistance in a cyber attack · data exfiltration intent · privilege escalation · deceptive behaviour · active exploitation or injection compliance | Block |
+| **M4** | Maximum severity | Serious privacy breach or theft · backdoor or persistent compromise · alignment circumvention · destructive action · automated abuse | Escalate |
+
+In practice this covers direct and indirect prompt injection, jailbreaks, tool poisoning, unsafe or off-policy tool calls, secret and credential leakage, and out-of-remit behaviour.
+
+## How it works
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant A as Agent + Adrian SDK
+    participant B as Adrian backend
+    participant C as Classifier model
+    participant H as Human reviewer
+
+    A->>B: PairedEvent (LLM call or tool call) over WebSocket + protobuf
+    B->>C: Prompt = remit + few-shot + session window + trace
+    C-->>B: MAD code (M0 / M2 / M3 / M4)
+    B-->>A: Verdict + policy snapshot
+    alt Alert mode
+        A->>A: Tool runs, verdict logged
+    else Block mode, in-scope verdict
+        A->>A: Tool is never executed, agent receives a synthetic block message
+    else Human Review mode, in-scope verdict
+        B->>H: Queued on the dashboard
+        H-->>A: Approve (tool runs) or reject (tool blocked)
+    end
+```
+
+1. **Instrument.** The SDK hooks your framework and pairs each `*_start` / `*_end` callback into a single `PairedEvent` carrying agent identity, parent context and payload.
+2. **Redact.** PII is scrubbed on the client before anything leaves the process.
+3. **Classify.** The backend keeps a sliding window of recent turns per `(session, invocation, agent)` so multi-step attacks are judged in context, and asks the classifier for a single MAD code.
+4. **Enforce.** The verdict returns to the SDK together with the policy in force. In Block and Human Review modes the SDK holds each `ToolNode` call until the verdict for the LLM turn that requested it arrives, correlated by `tool_call.id`.
+
+Tool-side attacks are covered on the next turn: a benign-looking call whose *output* carries an injection is caught when the poisoned output reaches the following LLM step, before the follow-up tool runs.
+
+### Execution modes
+
+The mode is configured per agent in the dashboard and pushed to the SDK on connect. There is no client-side switch to tamper with.
+
+| Mode | Behaviour |
+|---|---|
+| **Alert** | Never interferes. Verdicts are logged and optionally notified. |
+| **Block** | In-scope verdicts stop the tool call; the agent receives a synthetic `[BLOCKED by security policy]` result and the real tool never runs. |
+| **Human Review** | In-scope verdicts pause the tool call until a person approves or rejects it on the dashboard. Out-of-scope verdicts pass straight through. |
+
+Which tiers are "in scope" is controlled by per-agent toggles (`M0`, `M2`, `M3`, `M4`). The defaults arm M3 and M4.
 
 ## Quickstart
 
-> **Want the stupidly simple, 60-second hands-off install?** Feed your coding agent (Claude, Codex, Cursor, etc.) this file: [GET_STARTED_AI_GUIDE.md](https://github.com/secureagentics/Adrian/blob/main/GET_STARTED_AI_GUIDE.md). It will walk you through the installation process ([video guide here](https://youtu.be/7vYjeGxY8to)). Always review instructions manually.
+The fastest route is the managed dashboard. To run everything on your own hardware, go to [Self-hosting](#self-hosting).
 
-The next fastest way to try Adrian is the managed dashboard at [app.adrian.secureagentics.ai](https://app.adrian.secureagentics.ai). Sign-up takes a minute and there is nothing to install beyond the SDK. To run Adrian on your own infrastructure instead, jump to [Self-hosting](#self-hosting) below.
+**Prefer a hands-off install?** Give your coding agent [GET_STARTED_AI_GUIDE.md](GET_STARTED_AI_GUIDE.md) (also available as a [video walkthrough](https://youtu.be/7vYjeGxY8to)). It keeps secrets in a local `.env` and never asks you to paste a key into chat. As with any instructions you hand to an agent, read it first.
 
-1. Sign up at [app.adrian.secureagentics.ai](https://app.adrian.secureagentics.ai) and generate an API key.
-
-2. Configure Adrian for your agent and your preferences (remit of your agent, audit vs block mode, alerting channels, accepted behaviours vs known-risks).
-
-3. Install the SDK:
+1. Sign up at [app.adrian.secureagentics.ai](https://app.adrian.secureagentics.ai) and create an API key.
+2. In the dashboard, describe your agent's remit and choose a mode and alert channels.
+3. Install the SDK and your model provider:
 
    ```sh
-   pip install adrian-sdk
+   pip install adrian-sdk langchain langchain-openai   # or langchain-anthropic, etc.
    ```
 
-4. Install LangChain and the provider for your agent's model (the SDK auto-instruments LangChain / LangGraph; pick whichever provider matches your model):
-
-   ```sh
-   pip install langchain langchain-openai   # or langchain-anthropic, etc.
-   # or, in a uv project:  uv add langchain langchain-openai
-   ```
-
-   <sup>`langchain` pulls `langgraph` in, so this covers both `create_agent` and `create_react_agent`. Last verified 2026-06-24 with `langchain==1.3.9`, `langgraph==1.2.5`, `langchain-core==1.4.7`, `langchain-openai==1.3.2`. Supported: `langchain`/`langgraph`/`langchain-openai` `>=1.0,<2.0`, `langchain-core` `>=1.2.19,<2.0`.</sup>
-
-5. Wrap your LangChain agent. Two lines of Adrian (`init` + `shutdown`) bracket your normal LangChain / LangGraph code:
+4. Bracket your existing code with `init` and `shutdown`:
 
    ```python
    import asyncio
@@ -86,10 +134,13 @@ The next fastest way to try Adrian is the managed dashboard at [app.adrian.secur
    from langchain_openai import ChatOpenAI
 
    async def main():
-       adrian.init(api_key="adr_live_...")
+       adrian.init(
+           api_key="adr_live_...",
+           ws_url="wss://adrian.secureagentics.ai/ws",  # omit when self-hosting locally
+       )
        llm = ChatOpenAI(model="gpt-4o")
        response = await llm.ainvoke(
-           "Find the most underpriced recent IPOs and build an investment strategy",
+           "Find the most underpriced recent IPOs and build an investment strategy"
        )
        print(response.content)
        adrian.shutdown()
@@ -97,135 +148,198 @@ The next fastest way to try Adrian is the managed dashboard at [app.adrian.secur
    asyncio.run(main())
    ```
 
-   Full runnable version (with env-var checks) at [`examples/python/quickstart.py`](examples/python/quickstart.py). More complex examples using agents are in [`examples/python/`](examples/python/).
+5. Run the agent. Events appear in the dashboard within seconds, classified by severity.
 
-6. Run your agent. Events appear in the dashboard within seconds, classified by severity.
+> Use the async pattern. The WebSocket transport runs on the asyncio loop, so a synchronous `llm.invoke` can return before events are flushed.
 
-Full guide: [Quickstart](https://docs.adrian.secureagentics.ai/quickstart).
+More runnable examples live in [`examples/python`](examples/python) (LangChain agents, Anthropic, streaming, manual instrumentation, human-review gating) and [`examples/typescript`](examples/typescript).
 
 ## Self-hosting
 
-Adrian supports entirely offline, data sovereign deployments using just a handful of docker commands. This repository ships everything needed to run the entire Adrian stack on a single host: the Go backend (WebSocket + dashboard API + AI engine), the Next.js dashboard, the Python SDK, and a Llama.cpp container that serves a local Gemma model. No managed cloud, no telemetry leaving the box.
+Adrian can run fully offline on a single host with no managed cloud and no telemetry leaving the machine. The stack is the Go backend (WebSocket ingest, dashboard API, classification engine), the Next.js dashboard, and a `llama.cpp` container serving a local Gemma model.
 
-> **Hardware support:** Tested on NVIDIA GPUs with Gemma 4 (E2B / E4B) which is the model the bootstrap picker downloads by default. CPU-only is technically possible but will be slow on real workloads with those sized models.
+**Requirements**
 
-### Prerequisites
+- Docker with Compose v2
+- An NVIDIA GPU with a recent CUDA driver and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+- About 10 GB of free disk for the model
 
-- A host with Docker + Docker Compose v2.
-- An **NVIDIA GPU** with recent CUDA driver and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) installed (for the bundled Llama.cpp classifier). ~10 GB free disk for the model.
+The default classifier is Gemma 4 (E4B at roughly 5 GB, or E2B at roughly 3 GB), tested on NVIDIA GPUs. CPU-only operation is possible but slow at these model sizes.
 
-### Bring-up
+**Bring-up**
 
-1. **Clone:**
+```sh
+git clone https://github.com/secureagentics/Adrian
+cd Adrian
 
-   ```
-   git clone https://github.com/secureagentics/Adrian
-   cd Adrian
-   ```
+# 1. Bootstrap: creates the SQLite DB, applies migrations, generates an admin
+#    password and session secret, writes .env, and offers to download a model.
+docker compose --profile setup run --rm setup bootstrap
+#    Already have a GGUF in ./models/?  Add:  --gguf my-model.gguf
 
-2. **Run bootstrap.** Creates `data/adrian.db`, applies migrations, generates a random admin password, and writes `.env`. With no `--gguf` flag, the bootstrap interactively offers to download the recommended on-device classifier (Gemma 4 E4B, ~5 GB, or E2B ~3 GB) into `./models/`.
+# 2. Start backend, dashboard and classifier.
+docker compose --profile llm up -d
+```
 
-   ```sh
-   # Default: interactive picker downloads Gemma 4 E4B / E2B
-   docker compose --profile setup run --rm setup bootstrap
+Open `http://localhost:3000` and sign in as `admin@localhost` with the password printed by bootstrap (you will be asked to change it). Create an SDK key under **Settings → Agents → New key**.
 
-   # Already have a GGUF under ./models/? Pass it by name
-   docker compose --profile setup run --rm setup bootstrap \
-       --gguf my-model.gguf
-   ```
+Then install the in-tree SDK and point it at your backend. It defaults to `ws://localhost:8080/ws`, so only the key is needed:
 
-3. **Start the stack.**
+```sh
+make sdk-install
+source .venv/bin/activate
+uv pip install "langchain>=1.0,<2.0" "langchain-openai>=1.0,<2.0"
+```
 
-   ```sh
-   docker compose --profile llm up -d
-   ```
+Admin tasks run through the same setup container:
 
-4. **Open the dashboard.** Browse to `http://localhost:3000`. Sign in with `admin@localhost` plus the password the bootstrap printed; you'll be prompted to set a new one. Create an SDK API key and configure Adrian to monitor your specific agent from **Settings → Agents → New key**.
+```sh
+docker compose --profile setup run --rm setup reset-password
+docker compose --profile setup run --rm setup set-model --gguf gemma-4-e4b.gguf
+```
 
-5. **Wrap your agent.** The SDK lives in-tree under `sdk/`. Install it into a fresh `.venv` via the bundled Make target (uses [uv](https://docs.astral.sh/uv/)):
-
-   ```sh
-   make sdk-install
-   source .venv/bin/activate
-   ```
-
-   Install LangChain and the provider for your agent's model into the same venv:
-
-   ```sh
-   uv pip install "langchain>=1.0,<2.0" "langchain-openai>=1.0,<2.0"   # swap langchain-openai for your model's provider
-   ```
-
-   <sup>`langchain` pulls `langgraph` in, so this covers both `create_agent` and `create_react_agent`. Last verified 2026-06-24 with `langchain==1.3.9`, `langgraph==1.2.5`, `langchain-core==1.4.7`, `langchain-openai==1.3.2`.</sup>
-
-   Use the same `adrian.init` snippet as in the [Quickstart](#quickstart) above. The SDK defaults to `ws://localhost:8080/ws`, so a self-hosted setup needs nothing more than the API key - drop the `ws_url=` line.
-
-To [reset the admin password](https://docs.adrian.secureagentics.ai/reference/backend#reset-the-admin-password), [change the model](https://docs.adrian.secureagentics.ai/reference/backend#switch-the-local-gguf) and much more check out the dedicated [Docs site](https://docs.adrian.secureagentics.ai/).
+See the [backend reference](https://docs.adrian.secureagentics.ai/reference/backend) for more.
 
 ## Architecture
 
 ```mermaid
-flowchart TD
-    Agent[Agent runtime] --> SDK[Adrian SDK]
-    SDK --> Backend[Adrian backend]
-    Backend --> Classifier[Classifier model]
-    Classifier --> Verdict{Verdict}
-    Verdict --> Control[Control plane]
-    Verdict -.->|"Alert /<br>Human Review /<br>Block"| Agent
+flowchart LR
+    subgraph Agent host
+        AG[Agent runtime] --> SDK[Adrian SDK<br/>PII redaction]
+        CC[Claude Code] --> PLG[adrian-cc plugin]
+    end
+
+    SDK -- "WebSocket + protobuf" --> WS
+    PLG -- "WebSocket + protobuf" --> WS
+
+    subgraph Backend [adrian-backend · Go]
+        WS[ws<br/>API-key auth, heartbeat] --> ENG[engine<br/>sliding window, prompt build, parse]
+        ENG --> ST[(store<br/>SQLite WAL)]
+        ENG --> NOTE[notifications<br/>Discord]
+        API[api<br/>dashboard REST] --- ST
+    end
+
+    ENG -- "OpenAI-compatible<br/>chat completions" --> LLM[Classifier<br/>llama.cpp + Gemma]
+    ENG -. "verdict" .-> WS
+    UI[Dashboard<br/>Next.js] -- "REST /api/*" --> API
 ```
 
-## Integrations
+| Component | Path | Stack | Role |
+|---|---|---|---|
+| Backend | [`backend/`](backend) | Go 1.25, SQLite (WAL) | WebSocket ingest, classification engine, policy, human-review queue, audit log, dashboard API |
+| Dashboard | [`frontend/`](frontend) | Next.js 15, React 19, Tailwind | Agents and keys, policy editor, event and verdict feeds, review queue, webhooks, MCP servers |
+| Python SDK | [`sdk/python/`](sdk/python) | Python 3.12+ | LangChain, LangGraph and Anthropic instrumentation |
+| TypeScript SDK | [`sdk/typescript/`](sdk/typescript) | Node 18+, npm workspaces | Core pipeline and OpenAI client wrapper |
+| Claude Code plugin | [`integrations/claude-code/`](integrations/claude-code) | Python 3.12+, vendored deps | Hook-based enforcement inside Claude Code |
+| Wire format | [`proto/event.proto`](proto/event.proto) | Protobuf | Shared contract between SDKs and backend |
 
-<table>
-  <thead>
-    <tr><th></th><th>Supported</th><th>On roadmap</th></tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th align="left">Frameworks</th>
-      <td>
-        <a href="https://www.langchain.com/"><img height="32" src="https://cdn.simpleicons.org/langchain/1FA383" alt="LangChain"></a>&nbsp;&nbsp;
-        <a href="https://platform.openai.com/docs/agents"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/openai-dark.svg"><img height="32" src="assets/logos/openai-light.svg" alt="OpenAI Agents SDK"></picture></a>&nbsp;&nbsp;
-        <a href="https://claude.com/claude-code"><img height="32" src="https://cdn.simpleicons.org/claude/D97757" alt="Claude Code"></a>&nbsp;&nbsp;
-        <a href="https://docs.anthropic.com/"><img height="32" src="https://cdn.simpleicons.org/anthropic/D97757" alt="Anthropic SDK"></a>
-      </td>
-      <td>
-        <a href="https://www.crewai.com/"><img height="32" src="https://cdn.simpleicons.org/crewai/FF5A50" alt="CrewAI"></a>&nbsp;&nbsp;
-        <a href="https://github.com/openclaw/openclaw"><img height="32" src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/pixel-lobster.svg" alt="OpenClaw"></a>
-      </td>
-    </tr>
-    <tr>
-      <th align="left">Alerting</th>
-      <td>
-        <a href="https://discord.com/"><img height="32" src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord"></a>&nbsp;&nbsp;
-        <a href="https://slack.com/"><img height="32" src="assets/logos/slack.svg" alt="Slack"></a>
-      </td>
-      <td>
-        <a href="https://www.whatsapp.com/"><img height="32" src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp"></a>&nbsp;&nbsp;
-        <a href="https://www.microsoft.com/microsoft-teams/group-chat-software"><img height="32" src="assets/logos/teams.svg" alt="Microsoft Teams"></a>&nbsp;&nbsp;
-        <a href="https://www.pagerduty.com/"><img height="32" src="https://cdn.simpleicons.org/pagerduty/06AC38" alt="PagerDuty"></a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+The full container and package breakdown is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-Full list: [Integrations](https://docs.adrian.secureagentics.ai/integrations). **New:** the [Claude Code plugin](integrations/claude-code/README.md) is live. ⭐ the repo or [join Discord](https://discord.gg/Vq2VyYrw8Z).
+## SDKs and integrations
+
+| Target | Package | Install |
+|---|---|---|
+| LangChain / LangGraph (Python) | [`adrian-sdk`](sdk/python/README.md) | `pip install adrian-sdk` |
+| Anthropic SDK (Python) | [`adrian-sdk[anthropic]`](sdk/python/ANTHROPIC.md) | `pip install "adrian-sdk[anthropic]"` |
+| TypeScript core | [`@secureagentics/adrian`](sdk/typescript/README.md) | `npm install @secureagentics/adrian` |
+| OpenAI SDK (TypeScript) | [`@secureagentics/adrian-openai`](sdk/typescript/packages/openai/README.md) | `npm install @secureagentics/adrian-openai openai` |
+| Claude Code | [`adrian-cc`](integrations/claude-code/README.md) | `/plugin install adrian-cc@adrian` |
+
+The LangChain integration supports multi-agent topologies (subagents as tools, handoffs, hierarchical and supervisor graphs, parallel fan-out, swarms) and records parent and child relationships so a delegated agent is judged in the context of the agent that spawned it.
+
+Alerting from the bundled backend goes to Discord webhooks. CrewAI and further alert channels are on the roadmap; the [integrations page](https://docs.adrian.secureagentics.ai/integrations) tracks the current list.
+
+### Claude Code plugin
+
+```text
+/plugin marketplace add secureagentics/Adrian
+/plugin install adrian-cc@adrian
+/adrian-init
+```
+
+`/adrian-init` lets you choose Adrian Cloud, a self-hosted backend or a custom URL, writes `~/.adrian/.env`, and verifies the connection. After that, every tool call is classified and handled according to the server-side mode:
+
+- **Alert** logs only.
+- **Block** denies in-scope high-risk calls before they run.
+- **Human Review** asks you to approve or deny inline in the terminal.
+
+It also tracks sub-agents with parent and child hierarchy, captures tool output, groups events by prompt, and parses Claude's reasoning from the transcript. Requires Python 3.12+ on your `PATH`; dependencies are vendored, so there is no pip step.
+
+## Security and privacy by design
+
+- **PII redaction on the client.** Redaction is always on with no opt-out. Emails, phone numbers, SSNs, Luhn-validated card numbers, private IPs, dates of birth, IBANs, passports, street addresses, postal codes, driver licences and AWS access keys are replaced with tags such as `[EMAIL_REDACTED]` before an event is serialised, so the classifier sees the shape of the text but not the values.
+- **Server-driven enforcement.** Mode and scope come from the backend policy, not from client flags.
+- **Data sovereignty.** The self-hosted stack makes no outbound calls; classification runs on a local model.
+- **Explicit failure policy.** If the backend or classifier is unreachable, behaviour is configurable. The SDKs fail open by default after a timeout (`ADRIAN_BLOCK_TIMEOUT`, 30 s) and the Claude Code plugin fails open unless `ADRIAN_CC_FAIL_OPEN=false`. The backend policy exposes `fail_closed_on_classifier_error`, which is off by default. Choose deliberately for high-stakes agents.
+- **Hardened containers.** The backend ships as a static binary in a distroless image, images are build-only (`pull_policy: build`), and the classifier port is bound to `127.0.0.1`.
+- **Audit trail.** Events, verdicts, review decisions and administrative actions are persisted and viewable in the dashboard.
+
+Human Review waits are held in the SDK process. If the SDK restarts before a pending review is resolved, the late decision is dropped; the audit record survives.
+
+To report a vulnerability, follow [SECURITY.md](SECURITY.md). Please do not open a public issue.
+
+## Configuration
+
+Self-hosted settings live in `.env`, generated by `bootstrap` (see [`.env.example`](.env.example)).
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `ADRIAN_LLM_URL` | bundled `llama.cpp` endpoint | Classifier chat-completions URL, called verbatim |
+| `ADRIAN_LLM_MODEL_PATH` | set by bootstrap | In-container path of the GGUF model |
+| `ADRIAN_LLM_CTX_SIZE` | `8192` | Classifier context window (higher uses more VRAM) |
+| `ADRIAN_SLIDING_WINDOW_SIZE` | `16` | Recent turns kept per session, invocation and agent |
+| `ADRIAN_SLIDING_WINDOW_TTL_SECONDS` | `86400` | Window retention |
+| `ADRIAN_BACKEND_PORT` / `ADRIAN_DASHBOARD_PORT` | `8080` / `3000` | Host-side ports |
+| `ADRIAN_SESSION_SECRET` | generated | Dashboard session cookie secret; never commit |
+
+SDK-side variables (`ADRIAN_API_KEY`, `ADRIAN_WS_URL`, `ADRIAN_SESSION_ID`, `ADRIAN_BLOCK_TIMEOUT`) are documented in each SDK README.
+
+## Repository layout
+
+```text
+.
+├── backend/              Go service: ws, engine, store, api, notifications, alerts
+├── frontend/             Next.js dashboard
+├── sdk/
+│   ├── python/           adrian-sdk (LangChain, LangGraph, Anthropic)
+│   └── typescript/       @secureagentics/adrian and @secureagentics/adrian-openai
+├── integrations/
+│   └── claude-code/      adrian-cc plugin, hooks and slash commands
+├── proto/                Wire protocol (protobuf)
+├── examples/             Runnable Python and TypeScript examples
+├── deploy/               Dockerfiles for backend, frontend and setup
+├── docs/                 Architecture notes
+├── scripts/              Bootstrap and licence-header tooling
+└── compose.yaml          Single-host orchestration (profiles: setup, llm)
+```
+
+## Development
+
+```sh
+make sdk-install          # .venv + editable Python SDK with dev dependencies (needs uv)
+make sdk-test             # Python SDK test suite
+pre-commit install        # ruff, basedpyright, licence headers, whitespace checks
+
+cd sdk/typescript && npm install && npm run build && npm test
+cd backend && go test ./...
+```
+
+CI lints the Python SDK on pull requests and builds, tests and releases both SDKs. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 ## Contributing
 
-⭐ Star the repo if Adrian is useful. Then see [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide. In short: sign the [CLA](CLA.md), branch off `main`, follow the PR template, and use British English / no em-dashes in prose.
-
-See [CONTRIBUTORS.md](CONTRIBUTORS.md) for the list of people who have shaped Adrian, and how to add yourself.
-
-## Licence
-
-Adrian is released under the [Apache 2.0 licence](LICENSE). New source files should carry the SPDX header from [LICENSE_HEADER.txt](LICENSE_HEADER.txt).
+Contributions are welcome. In short: sign the [CLA](CLA.md), branch from `main`, keep one logical change per pull request, follow the [PR template](.github/PULL_REQUEST_TEMPLATE.md), and add the [SPDX header](LICENSE_HEADER.txt) to new source files. Prose uses British English and avoids em-dashes. See [CONTRIBUTORS.md](CONTRIBUTORS.md) for the people who have shaped the project.
 
 ## Community
 
-- [Discord](https://discord.gg/Vq2VyYrw8Z) for chat with the team and other Adrian users
+- [Discord](https://discord.gg/Vq2VyYrw8Z) for questions and discussion with the team and other users
 - [LinkedIn](https://www.linkedin.com/company/secure-agentics) for product updates
+- [Issues](https://github.com/secureagentics/Adrian/issues) for bugs and feature requests
 
-## Featured on
+If you think agents need a runtime security layer, a ⭐ helps other people find the project.
 
-- [Product Hunt](https://www.producthunt.com/products/adrian?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-adrian) <a href="https://www.producthunt.com/products/adrian?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-adrian" target="_blank" rel="noopener noreferrer"><img src="https://cdn.simpleicons.org/producthunt/DA552F" alt="Featured on Product Hunt" height="25"></a>
-- [There's An AI For That](https://theresanaiforthat.com/ai/adrian/?ref=social-icon&v=10763736) <a href="https://theresanaiforthat.com/ai/adrian/?ref=social-icon&v=10763736" target="_blank" rel="nofollow"><img src="https://media.theresanaiforthat.com/social/icon_full.svg" alt="Featured on TAAFT" height="25"></a>
+## Licence
+
+Released under the [Apache License 2.0](LICENSE). © SecureAgentics.
+
+<p align="center"><sub>Adrian is built by <a href="https://www.secureagentics.ai">Secure Agentics</a>.</sub></p>
