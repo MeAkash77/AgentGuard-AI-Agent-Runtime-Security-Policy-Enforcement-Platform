@@ -1,14 +1,14 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/adrian-logo-dark.png">
-    <img src="assets/adrian-logo-light.png" alt="Adrian by Secure Agentics" width="340">
+    <img src="assets/adrian-logo-light.png" alt="AgentGuard-AI-Agent-Runtime-Security-Policy-Enforcement-Platform" width="340">
   </picture>
 </p>
 
 <h3 align="center">Runtime security for AI agents.</h3>
 
 <p align="center">
-  Adrian watches what your agent <b>does</b> and why it <b>decided</b> to do it,<br>
+  AgentGuard watches what your agent <b>does</b> and why it <b>decided</b> to do it,<br>
   then alerts, pauses for a human, or blocks the action before it lands.
 </p>
 
@@ -19,37 +19,33 @@
   <img src="https://img.shields.io/badge/python-3.12%2B-3776AB?logo=python&logoColor=white" alt="Python 3.12+">
   <img src="https://img.shields.io/badge/node-18%2B-339933?logo=nodedotjs&logoColor=white" alt="Node 18+">
   <img src="https://img.shields.io/badge/backend-Go-00ADD8?logo=go&logoColor=white" alt="Go backend">
-  <a href="https://discord.gg/Vq2VyYrw8Z"><img src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/secureagentics/Adrian/stargazers"><img src="https://img.shields.io/github/stars/secureagentics/Adrian?style=social" alt="GitHub stars"></a>
+  <a href="https://github.com/<your-username>/AgentGuard-AI-Agent-Runtime-Security-Policy-Enforcement-Platform/stargazers"><img src="https://img.shields.io/github/stars/<your-username>/AgentGuard-AI-Agent-Runtime-Security-Policy-Enforcement-Platform?style=social" alt="GitHub stars"></a>
 </p>
 
 <p align="center">
   <a href="https://docs.adrian.secureagentics.ai">Documentation</a> ·
   <a href="https://app.adrian.secureagentics.ai">Managed dashboard</a> ·
   <a href="#quickstart">Quickstart</a> ·
-  <a href="#self-hosting">Self-hosting</a> ·
-  <a href="https://discord.gg/Vq2VyYrw8Z">Discord</a>
+  <a href="#self-hosting">Self-hosting</a>
 </p>
 
 ---
 
 ## Overview
 
-Adrian is an open-source runtime security monitoring and control engine for AI agents, aligned with the [AARM](https://aarm.dev) specification. It ingests two signals from a running agent, **activity** (tool calls, actions, outputs) and **reasoning** (the chain of thought behind each step), and classifies every step against a declared remit. Depending on policy, a risky step is logged, held for human approval, or stopped before the tool executes.
+**AgentGuard-AI-Agent-Runtime-Security-Policy-Enforcement-Platform** (AgentGuard) is an open-source runtime security monitoring and control engine for AI agents, aligned with the [AARM](https://aarm.dev) specification. It ingests two signals from a running agent, **activity** (tool calls, actions, outputs) and **reasoning** (the chain of thought behind each step), and classifies every step against a declared remit. Depending on policy, a risky step is logged, held for human approval, or stopped before the tool executes.
 
-Static analysis and network monitoring cannot see an agent being talked into misbehaving. Adrian sits inside the agent loop, so it can.
+Static analysis and network monitoring cannot see an agent being talked into misbehaving. AgentGuard sits inside the agent loop, so it can.
 
 > **Claude Code plugin.** Secure every tool call in your terminal with no code changes:
 > `/plugin marketplace add secureagentics/Adrian`, then `/plugin install adrian-cc@adrian`, then `/adrian-init`.
 > See [integrations/claude-code](integrations/claude-code/README.md).
 
-<p align="center"><a href="https://www.youtube.com/watch?v=NkEISlRhyFs"><b>Watch the launch video</b></a></p>
+## Why AgentGuard
 
-## Why Adrian
+Most agent monitoring stops at activity logs: API calls, MCP traffic, database queries. AgentGuard also analyses the agent's reasoning, so it understands why an action was taken, in what context, and what the agent plans to do next. [Research from OpenAI and DeepMind](https://arxiv.org/pdf/2503.11926) reports that combining behaviour and reasoning analysis improves detection accuracy by about 35% and is roughly four times more likely to catch nuanced attacks than behaviour-only monitoring.
 
-Most agent monitoring stops at activity logs: API calls, MCP traffic, database queries. Adrian also analyses the agent's reasoning, so it understands why an action was taken, in what context, and what the agent plans to do next. [Research from OpenAI and DeepMind](https://arxiv.org/pdf/2503.11926) reports that combining behaviour and reasoning analysis improves detection accuracy by about 35% and is roughly four times more likely to catch nuanced attacks than behaviour-only monitoring.
-
-|  | Pattern-matching classifiers | Adrian |
+|  | Pattern-matching classifiers | AgentGuard |
 |---|---|---|
 | **Detection basis** | Similarity to known prompt-injection datasets | Judgement against *your agent's declared remit* |
 | **Signals** | Prompt or output text | Reasoning traces, tool calls and tool outputs, correlated across the whole session |
@@ -74,8 +70,8 @@ In practice this covers direct and indirect prompt injection, jailbreaks, tool p
 ```mermaid
 sequenceDiagram
     autonumber
-    participant A as Agent + Adrian SDK
-    participant B as Adrian backend
+    participant A as Agent + AgentGuard SDK
+    participant B as AgentGuard backend
     participant C as Classifier model
     participant H as Human reviewer
 
@@ -156,7 +152,7 @@ More runnable examples live in [`examples/python`](examples/python) (LangChain a
 
 ## Self-hosting
 
-Adrian can run fully offline on a single host with no managed cloud and no telemetry leaving the machine. The stack is the Go backend (WebSocket ingest, dashboard API, classification engine), the Next.js dashboard, and a `llama.cpp` container serving a local Gemma model.
+AgentGuard can run fully offline on a single host with no managed cloud and no telemetry leaving the machine. The stack is the Go backend (WebSocket ingest, dashboard API, classification engine), the Next.js dashboard, and a `llama.cpp` container serving a local Gemma model.
 
 **Requirements**
 
@@ -169,8 +165,8 @@ The default classifier is Gemma 4 (E4B at roughly 5 GB, or E2B at roughly 3 GB),
 **Bring-up**
 
 ```sh
-git clone https://github.com/secureagentics/Adrian
-cd Adrian
+git clone https://github.com/<your-username>/AgentGuard-AI-Agent-Runtime-Security-Policy-Enforcement-Platform
+cd AgentGuard-AI-Agent-Runtime-Security-Policy-Enforcement-Platform
 
 # 1. Bootstrap: creates the SQLite DB, applies migrations, generates an admin
 #    password and session secret, writes .env, and offers to download a model.
@@ -205,7 +201,7 @@ See the [backend reference](https://docs.adrian.secureagentics.ai/reference/back
 ```mermaid
 flowchart LR
     subgraph Agent host
-        AG[Agent runtime] --> SDK[Adrian SDK<br/>PII redaction]
+        AG[Agent runtime] --> SDK[AgentGuard SDK<br/>PII redaction]
         CC[Claude Code] --> PLG[adrian-cc plugin]
     end
 
@@ -257,7 +253,7 @@ Alerting from the bundled backend goes to Discord webhooks. CrewAI and further a
 /adrian-init
 ```
 
-`/adrian-init` lets you choose Adrian Cloud, a self-hosted backend or a custom URL, writes `~/.adrian/.env`, and verifies the connection. After that, every tool call is classified and handled according to the server-side mode:
+`/adrian-init` lets you choose the managed cloud, a self-hosted backend or a custom URL, writes `~/.adrian/.env`, and verifies the connection. After that, every tool call is classified and handled according to the server-side mode:
 
 - **Alert** logs only.
 - **Block** denies in-scope high-risk calls before they run.
@@ -332,14 +328,12 @@ Contributions are welcome. In short: sign the [CLA](CLA.md), branch from `main`,
 
 ## Community
 
-- [Discord](https://discord.gg/Vq2VyYrw8Z) for questions and discussion with the team and other users
-- [LinkedIn](https://www.linkedin.com/company/secure-agentics) for product updates
-- [Issues](https://github.com/secureagentics/Adrian/issues) for bugs and feature requests
+- [Issues](https://github.com/<your-username>/AgentGuard-AI-Agent-Runtime-Security-Policy-Enforcement-Platform/issues) for bugs and feature requests
 
 If you think agents need a runtime security layer, a ⭐ helps other people find the project.
 
 ## Licence
 
-Released under the [Apache License 2.0](LICENSE). © SecureAgentics.
+Released under the [Apache License 2.0](LICENSE). This project is derived from [Adrian](https://github.com/secureagentics/Adrian) by Secure Agentics; the original copyright and licence notices are retained as the licence requires.
 
-<p align="center"><sub>Adrian is built by <a href="https://www.secureagentics.ai">Secure Agentics</a>.</sub></p>
+<p align="center"><sub>AgentGuard-AI-Agent-Runtime-Security-Policy-Enforcement-Platform</sub></p>
